@@ -17,7 +17,7 @@ const Login = () => {
     try {
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL || ''}/api/auth/login`, data);
       login(res.data.token, res.data.user);
-      navigate('/');
+      navigate('/dashboard');  // Redirect to role-based dashboard after login
     } catch (err) {
       setSnackbar({ open: true, message: err.response?.data?.message || 'התחברות נכשלה', severity: 'error' });
     } finally {
@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', color: '#0d47a1' }}>
         התחברות
       </Typography>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -42,6 +42,8 @@ const Login = () => {
           {...register('username', { required: 'שם משתמש הוא שדה חובה' })}
           error={!!errors.username}
           helperText={errors.username?.message}
+          autoFocus
+          inputProps={{ 'aria-label': 'שם משתמש' }}
         />
         <TextField
           label="סיסמה"
@@ -51,6 +53,7 @@ const Login = () => {
           {...register('password', { required: 'סיסמה היא שדה חובה' })}
           error={!!errors.password}
           helperText={errors.password?.message}
+          inputProps={{ 'aria-label': 'סיסמה' }}
         />
         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disabled={loading}>
           {loading ? 'טוען...' : 'התחברות'}

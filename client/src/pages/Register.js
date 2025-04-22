@@ -90,6 +90,8 @@ const Register = () => {
           {...register('username', { required: 'שם משתמש הוא שדה חובה' })}
           error={!!errors.username}
           helperText={errors.username?.message}
+          inputProps={{ 'aria-label': 'שם משתמש' }}
+          autoFocus
         />
         <TextField
           label="אימייל"
@@ -103,6 +105,7 @@ const Register = () => {
           })}
           error={!!errors.email}
           helperText={errors.email?.message}
+          inputProps={{ 'aria-label': 'אימייל' }}
         />
         <TextField
           label="סיסמה"
@@ -113,6 +116,7 @@ const Register = () => {
           {...register('password', { required: 'סיסמה היא שדה חובה', minLength: { value: 6, message: 'מינימום 6 תווים' } })}
           error={!!errors.password}
           helperText={errors.password?.message}
+          inputProps={{ 'aria-label': 'סיסמה' }}
         />
         <TextField
           label="אימות סיסמה"
@@ -126,6 +130,7 @@ const Register = () => {
           })}
           error={!!errors.passwordConfirm}
           helperText={errors.passwordConfirm?.message}
+          inputProps={{ 'aria-label': 'אימות סיסמה' }}
         />
         <TextField
           label="קישור לפרופיל LinkedIn"
@@ -138,6 +143,7 @@ const Register = () => {
           })}
           error={!!errors.linkedin}
           helperText={errors.linkedin?.message}
+          inputProps={{ 'aria-label': 'קישור לפרופיל LinkedIn' }}
         />
         <TextField
           label="קישור לתיק עבודות"
@@ -150,6 +156,7 @@ const Register = () => {
           })}
           error={!!errors.portfolio}
           helperText={errors.portfolio?.message}
+          inputProps={{ 'aria-label': 'קישור לתיק עבודות' }}
         />
         <FormControl fullWidth margin="normal" error={!!errors.role}>
           <InputLabel id="role-label">תפקיד</InputLabel>
@@ -158,6 +165,7 @@ const Register = () => {
             label="תפקיד"
             defaultValue=""
             {...register('role', { required: 'תפקיד הוא שדה חובה' })}
+            inputProps={{ 'aria-label': 'תפקיד' }}
           >
             <MenuItem value="מועמד">מועמד</MenuItem>
             <MenuItem value="מגייס">מגייס</MenuItem>

@@ -1,3 +1,5 @@
+
+
 const User = require('../models/User');
 const path = require('path');
 
@@ -15,6 +17,17 @@ exports.getUserById = async (req, res) => {
     res.status(500).json({ message: 'שגיאת שרת' });
   }
 };
+
+exports.getUsersList = async (req, res) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.user.id } }).select('-password');
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'שגיאת שרת' });
+  }
+};
+
 
 exports.updateProfileImage = async (req, res) => {
   try {

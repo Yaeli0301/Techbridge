@@ -7,6 +7,8 @@ const jobController = require('../controllers/jobController');
 router.post('/', protect, jobController.createJob);
 router.get('/', jobController.getJobs);
 router.get('/recommended', protect, jobController.getRecommendedJobs);
+router.get('/applied', protect, jobController.getAppliedJobs);
+router.get('/my-jobs', protect, jobController.getMyJobs);
 router.get('/:id', jobController.getJobById);
 router.post('/:id/apply', protect, jobController.applyToJob);
 

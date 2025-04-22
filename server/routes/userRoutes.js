@@ -24,6 +24,9 @@ router.get('/profile', protect, authController.getCurrentUser);
 router.put('/profile', protect, userController.updateProfile); // Updated to use updateProfile
 router.post('/profile-image', protect, upload.single('image'), userController.updateProfileImage); // Added route for profile image upload
 
+// New route to get all users except current user for messaging
+router.get('/', protect, userController.getUsersList);
+
 // Favorites routes
 router.get('/favorites', protect, favoritesController.getFavorites);
 router.get('/favorites/:id', protect, favoritesController.getFavoriteById);

@@ -2,6 +2,9 @@ const Job = require('../models/Job');
 
 exports.createJob = async (req, res) => {
   try {
+    if (!req.user.role || req.user.role.trim() !== 'מגייס') {
+      return res.status(403).json({ message: 'אין לך הרשאה לפרסם משרה' });
+    }
     const { title, description, company, location, salary } = req.body;
     const job = new Job({
       title,
@@ -93,6 +96,28 @@ exports.getRecommendedJobs = async (req, res) => {
     }
 
     const jobs = await Job.find(query).limit(10).sort({ createdAt: -1 });
+    res.json(jobs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'שגיאת שרת' });
+  }
+};
+
+exports.getAppliedJobs = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const jobs = await Job.find({ applicants: userId }).sort({ createdAt: -1 });
+    res.json(jobs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'שגיאת שרת' });
+  }
+};
+
+exports.getMyJobs = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const jobs = await Job.find({ postedBy: userId }).populate('applicants', 'username email').sort({ createdAt: -1 });
     res.json(jobs);
   } catch (err) {
     console.error(err);

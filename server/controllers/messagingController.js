@@ -1,88 +1,47 @@
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 const Message = require('../models/Message');
 
 exports.sendMessage = async (req, res) => {
   try {
+    const senderId = req.user.id;
     const { recipientId, content } = req.body;
+    console.log('sendMessage called with:', { senderId, recipientId, content });
     if (!recipientId || !content) {
-      return res.status(400).json({ message: 'יש לספק מקבל ותוכן הודעה' });
+      return res.status(400).json({ message: 'Recipient and content are required' });
     }
     const message = new Message({
-      sender: req.user.id,
-      recipient: recipientId,
-      content
+      sender: new ObjectId(senderId),
+      recipient: new ObjectId(recipientId),
+      content,
     });
     await message.save();
+    console.log('Message saved:', message);
     res.status(201).json(message);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'שגיאת שרת' });
+    console.error('sendMessage error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 exports.getMessages = async (req, res) => {
   try {
-    const { withUserId } = req.query;
+    const userId = new ObjectId(req.user.id);
+    const withUserId = new ObjectId(req.query.withUserId);
+    console.log('getMessages called with:', { userId, withUserId });
     if (!withUserId) {
-      return res.status(400).json({ message: 'יש לספק מזהה משתמש לשיחה' });
+      return res.status(400).json({ message: 'withUserId query parameter is required' });
     }
     const messages = await Message.find({
       $or: [
-        { sender: req.user.id, recipient: withUserId },
-        { sender: withUserId, recipient: req.user.id }
+        { sender: userId, recipient: withUserId },
+        { sender: withUserId, recipient: userId }
       ]
     }).sort({ sentAt: 1 });
-    res.json(messages);
+    console.log('Messages found:', messages.length);
+    res.status(200).json(messages);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'שגיאת שרת' });
-  }
-};
-
-exports.getMessageById = async (req, res) => {
-  try {
-    const message = await Message.findById(req.params.id);
-    if (!message) {
-      return res.status(404).json({ message: 'ההודעה לא נמצאה' });
-    }
-    res.json(message);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'שגיאת שרת' });
-  }
-};
-
-exports.updateMessage = async (req, res) => {
-  try {
-    const { content } = req.body;
-    const message = await Message.findById(req.params.id);
-    if (!message) {
-      return res.status(404).json({ message: 'ההודעה לא נמצאה' });
-    }
-    if (message.sender.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'אין הרשאה לעדכן הודעה זו' });
-    }
-    message.content = content;
-    await message.save();
-    res.json({ message: 'ההודעה עודכנה בהצלחה' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'שגיאת שרת' });
-  }
-};
-
-exports.deleteMessage = async (req, res) => {
-  try {
-    const message = await Message.findById(req.params.id);
-    if (!message) {
-      return res.status(404).json({ message: 'ההודעה לא נמצאה' });
-    }
-    if (message.sender.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'אין הרשאה למחוק הודעה זו' });
-    }
-    await message.remove();
-    res.json({ message: 'ההודעה נמחקה בהצלחה' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'שגיאת שרת' });
+    console.error('getMessages error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };

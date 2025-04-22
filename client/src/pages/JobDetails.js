@@ -7,7 +7,7 @@ import { AuthContext } from '../context/AuthContext';
 const JobDetails = () => {
   const { id } = useParams();
   const [job, setJob] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { user, refreshAppliedJobs, setRefreshAppliedJobs } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [applyLoading, setApplyLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
@@ -43,6 +43,7 @@ const JobDetails = () => {
       });
       setSnackbar({ open: true, message: 'הגשת המועמדות בוצעה בהצלחה', severity: 'success' });
       setApplied(true);
+      setRefreshAppliedJobs(prev => !prev);
     } catch (err) {
       setSnackbar({ open: true, message: err.response?.data?.message || 'נכשל בהגשת המועמדות', severity: 'error' });
     } finally {
@@ -71,7 +72,7 @@ const JobDetails = () => {
       <Typography variant="subtitle1" gutterBottom>
         Salary: {job.salary}
       </Typography>
-      {user && (
+      {user && user.role === 'מועמד' && user._id !== job.postedBy && (
         <Box mt={2}>
           <Button variant="contained" color="primary" onClick={applyToJob} disabled={applyLoading || applied}>
             {applyLoading ? 'שולח...' : applied ? 'הוגשה מועמדות' : 'הגש מועמדות'}

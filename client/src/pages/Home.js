@@ -1,124 +1,137 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Button, Grid, Card, CardContent, CardActions, Link } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Box, Container, Typography, Button, Grid, TextField, InputAdornment, IconButton } from '@mui/material';
+import WorkIcon from '@mui/icons-material/Work';
+import ChatIcon from '@mui/icons-material/Chat';
+import PeopleIcon from '@mui/icons-material/People';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Home = () => {
-  const [featuredJobs, setFeaturedJobs] = useState([]);
-  const [blogPosts, setBlogPosts] = useState([]);
-  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    // Fetch featured jobs from backend (limit 3)
-    axios.get('/api/jobs?limit=3')
-      .then(res => setFeaturedJobs(res.data))
-      .catch(err => console.error('Failed to fetch featured jobs', err));
-
-    // Fetch blog posts from backend (limit 3)
-    axios.get('/api/blog?limit=3')
-      .then(res => {
-        if (Array.isArray(res.data)) {
-          setBlogPosts(res.data);
-        } else {
-          console.error('Blog posts response is not an array:', res.data);
-          setBlogPosts([]);
-        }
-      })
-      .catch(err => console.error('Failed to fetch blog posts', err));
-  }, []);
+  const handleSearch = () => {
+    if (searchTerm.trim() !== '') {
+      window.location.href = `/jobs?search=${encodeURIComponent(searchTerm)}`;
+    }
+  };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Box textAlign="center" mb={4}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#0d47a1', fontWeight: 'bold' }}>
-          ברוכים הבאים לגיוס אייטק
-        </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-          השער שלך למשרות הטובות ביותר בתחום ההייטק ולכישרונות מובילים.
-        </Typography>
-        <Typography variant="body1" paragraph>
-          גלו הזדמנויות עבודה מרגשות, צרו את הפרופיל שלכם, והתחברו למגייסים מובילים בתעשיית הטכנולוגיה.
-        </Typography>
-        <Typography variant="body1" paragraph>
-          השתמשו בסרגל הניווט כדי לעיין במשרות, להירשם או להתחבר לחשבונכם.
-        </Typography>
-        <Box mt={2}>
-          <Button variant="contained" color="primary" onClick={() => navigate('/register')} sx={{ mr: 2, bgcolor: '#0d47a1' }}>
-            הרשמה
+    <Box>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          height: '80vh',
+          backgroundImage: 'url(/image/תמונה לדף הבית.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          textAlign: 'center',
+          px: 2,
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            bgcolor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1,
+          }}
+        />
+        <Container sx={{ position: 'relative', zIndex: 2 }}>
+          <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}>
+            מצאו את המשרה הבאה שלכם ב-TechBridge
+          </Typography>
+          <Typography variant="h5" sx={{ mb: 4, textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+            פלטפורמה חדשנית לחיפוש משרות, יצירת קשר עם מגייסים וניהול שיחות פרטיות
+          </Typography>
+
+          {/* Search Bar */}
+          <Box
+            component="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch();
+            }}
+            sx={{ display: 'flex', justifyContent: 'center', maxWidth: 600, mx: 'auto', mb: 4 }}
+          >
+            <TextField
+              variant="outlined"
+              placeholder="חפש משרה, חברה או מיקום"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearch} edge="end" aria-label="search">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ bgcolor: 'white', borderRadius: 1 }}
+            />
+          </Box>
+
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{ mr: 2 }}
+            href="/jobs"
+          >
+            חפש משרות
           </Button>
-          <Button variant="outlined" color="primary" onClick={() => navigate('/jobs')}>
-            חיפוש משרות
+          <Button
+            variant="outlined"
+            color="inherit"
+            size="large"
+            href="/register"
+          >
+            הצטרף עכשיו
           </Button>
-        </Box>
+        </Container>
       </Box>
-      <Box mb={4}>
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-          משרות מומלצות
-        </Typography>
-        <Grid container spacing={2}>
-          {featuredJobs.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
-              אין משרות זמינות כרגע.
+
+      {/* Features Section */}
+      <Container sx={{ py: 6 }}>
+        <Grid container spacing={4} justifyContent="center" textAlign="center">
+          <Grid item xs={12} md={4}>
+            <WorkIcon sx={{ fontSize: 60, color: '#0d47a1', mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              משרות איכותיות
             </Typography>
-          ) : (
-            featuredJobs.map((job) => (
-              <Grid item xs={12} sm={6} md={4} key={job._id}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-                      {job.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {job.company}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {job.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" onClick={() => navigate(`/jobs/${job._id}`)}>
-                      פרטים נוספים
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))
-          )}
-        </Grid>
-      </Box>
-      <Box mb={4}>
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-          בלוג וטיפים לקריירה
-        </Typography>
-        <Grid container spacing={2}>
-          {blogPosts.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
-              אין פוסטים זמינים כרגע.
+            <Typography variant="body1" color="text.secondary">
+              גישה למגוון רחב של משרות טכנולוגיות מובילות בישראל.
             </Typography>
-          ) : (
-            blogPosts.map((post) => (
-              <Grid item xs={12} sm={6} md={4} key={post._id}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-                      {post.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {post.summary}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Link href={post.url} target="_blank" rel="noopener" underline="hover" sx={{ ml: 1 }}>
-                      קרא עוד
-                    </Link>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))
-          )}
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <PeopleIcon sx={{ fontSize: 60, color: '#0d47a1', mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              יצירת קשר עם מגייסים
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              תקשורת ישירה עם מגייסים ומנהלי משאבי אנוש.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <ChatIcon sx={{ fontSize: 60, color: '#0d47a1', mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              שיחות פרטיות
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              ניהול שיחות פרטיות עם מגייסים ומועמדים אחרים בפלטפורמה.
+            </Typography>
+          </Grid>
         </Grid>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

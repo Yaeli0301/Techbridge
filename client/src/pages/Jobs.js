@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Typography, TextField, Grid, Card, CardContent, CardActions, Button, Snackbar, Alert, FormControl, InputLabel, Select, MenuItem, IconButton } from '@mui/material';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -17,6 +21,13 @@ const Jobs = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
   const [favorites, setFavorites] = useState([]);
   const [alerts, setAlerts] = useState([]);
+
+  const query = useQuery();
+
+  useEffect(() => {
+    const searchParam = query.get('search') || '';
+    setSearch(searchParam);
+  }, [query]);
 
   useEffect(() => {
     fetchJobs();
@@ -182,7 +193,7 @@ const Jobs = () => {
                   <Typography variant="body2" noWrap>{job.description}</Typography>
                 </CardContent>
                 <CardActions>
-                  <Button component={Link} to={`/jobs/${job._id}`} size="small">
+                  <Button component={Link} to={`/job-details/${job._id}`} size="small">
                     פרטים
                   </Button>
                   <IconButton
